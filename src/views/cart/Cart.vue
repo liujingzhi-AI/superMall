@@ -5,6 +5,7 @@
 </template>
 
 <script>
+// 该部分的修改由cart分支执行
 export default {
   name: 'Cart',
 
