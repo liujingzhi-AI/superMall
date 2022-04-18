@@ -9,7 +9,7 @@ import NavBar from '@/components/common/navbar/NavBar';
 import {
   getHomeMultidata
 } from "network/home"
-
+// 该部分的修改由Home分支执行
 export default {
   name: 'Home',
   components:{
