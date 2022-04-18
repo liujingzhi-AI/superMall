@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import VueAwesomeSwiper from 'vue-awesome-swiper'
-import 'swiper/dist/css/swiper.css'
+import Swiper from "vue-awesome-swiper";
+import "swiper/css/swiper.css";
 
 Vue.config.productionTip = false
-// 轮播图插件使用
-Vue.use(VueAwesomeSwiper)
+// swiper插件使用
+Vue.use(Swiper)
 
 new Vue({
   render: h => h(App),

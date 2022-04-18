@@ -1,6 +1,9 @@
 <template>
   <div>
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <home-swiper
+      :banner="banner"
+    ></home-swiper>
   </div>
 </template>
 
@@ -8,12 +11,14 @@
 import NavBar from '@/components/common/navbar/NavBar';
 import {
   getHomeMultidata
-} from "network/home"
+} from "network/home";
+import HomeSwiper from './childComponts/HomeSwiper'
 // 该部分的修改由Home分支执行
 export default {
   name: 'Home',
   components:{
-    NavBar
+    NavBar,
+    HomeSwiper
   },
   data() {
     return {
@@ -24,10 +29,11 @@ export default {
   created() {
     // 1.请求多个数据
     getHomeMultidata().then(res => {
-      console.log("请求回来的数据",res);
       this.banner = res.data.banner.list
       this.recommend = res.data.recommend.list
     })
+  },
+  methods: {
   }
 };
 </script>
