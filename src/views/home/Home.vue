@@ -1,9 +1,14 @@
 <template>
   <div>
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <!-- 轮播图 -->
     <home-swiper
       :banner="banner"
     ></home-swiper>
+    <!-- 推荐信息 -->
+    <recommend-view
+      :recommend="recommend"
+    ></recommend-view>
   </div>
 </template>
 
@@ -12,18 +17,20 @@ import NavBar from '@/components/common/navbar/NavBar';
 import {
   getHomeMultidata
 } from "network/home";
-import HomeSwiper from './childComponts/HomeSwiper'
+import HomeSwiper from './childComponts/HomeSwiper';
+import RecommendView from './childComponts/RecommendView.vue';
 // 该部分的修改由Home分支执行
 export default {
   name: 'Home',
   components:{
     NavBar,
-    HomeSwiper
+    HomeSwiper,
+    RecommendView
   },
   data() {
     return {
-      banner: {},
-      recommend: {},
+      banner: [],
+      recommend: [],
     };
   },
   created() {
