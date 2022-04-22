@@ -15,10 +15,7 @@ export default {
             return this.$el
         }
     },
-    mounted() {
-      //获取高度变化
-      this.$refs.sticky_.sticky()
-    },
+    mounted() {},
     methods: {
         // css: 用于替换的css样式; (一般用默认的)
         sticky_(css='sticky_') {
@@ -41,13 +38,6 @@ export default {
                     newNodeTop.style.height = height + 'px';
                 }, 0)
             }
-        },
-        watch: {
-          oldToNew(newVal, oldVal) {
-            if(newVal.length !== oldVal.length) {
-              this.$refs.sticky_.sticky()
-            }
-          }
         },
     }
 }

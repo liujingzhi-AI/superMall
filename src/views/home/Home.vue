@@ -52,6 +52,17 @@ export default {
       this.keywords = res.data.keywords.list
     })
   },
+  mounted() {
+    //获取高度变化
+    this.$refs.sticky_.sticky_()
+  },
+  watch: {
+    oldToNew(newVal, oldVal) {
+      if(newVal.length !== oldVal.length) {
+        this.$refs.sticky_.sticky_()
+      }
+    }
+  },
   methods: {
   }
 };
