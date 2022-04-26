@@ -1,8 +1,10 @@
 <template>
   <div class="tab-bar-item" @click="btn">
+    <!-- 点击前图标 -->
     <slot v-if="!isActive" name="item-icon"></slot>
+    <!-- 点击后图表 -->
     <slot v-else name="item-icon-active"></slot>
-    <!-- :class不能直接卸载slot插槽当中，因为插槽是会被替换掉的 -->
+    <!-- :class不能直接写在slot插槽当中，因为插槽是会被替换掉的 -->
     <div :style="activeStyle">
       <slot name="item-text"></slot>
     </div>
