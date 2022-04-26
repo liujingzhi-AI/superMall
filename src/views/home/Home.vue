@@ -55,16 +55,17 @@ export default {
   mounted() {
     //获取高度变化
     this.$refs.sticky_.sticky_()
+    console.log("this.$el:" + this.$el)
   },
   watch: {
-    oldToNew(newVal, oldVal) {
-      if(newVal.length !== oldVal.length) {
-        this.$refs.sticky_.sticky_()
-      }
-    }
+    // ?
+    // oldToNew(newVal, oldVal) {
+    //   if(newVal.length !== oldVal.length) {
+    //     this.$refs.sticky_.sticky_()
+    //   }
+    // }
   },
-  methods: {
-  }
+  methods: {}
 };
 </script>
 
