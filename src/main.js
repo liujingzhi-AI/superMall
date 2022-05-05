@@ -3,10 +3,15 @@ import App from './App.vue'
 import router from './router'
 import Swiper from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import 'lib-flexible/flexible';
 
 Vue.config.productionTip = false
 // swiper插件使用
 Vue.use(Swiper)
+// element
+Vue.use(ElementUI);
 
 new Vue({
   render: h => h(App),

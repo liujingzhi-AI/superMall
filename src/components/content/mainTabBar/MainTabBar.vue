@@ -1,3 +1,4 @@
+<!-- 底部导航栏 -->
 <template>
   <div>
     <tab-bar>
