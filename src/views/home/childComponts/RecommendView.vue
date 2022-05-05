@@ -34,7 +34,9 @@ export default {
 <style scoped>
 .rowCircle {
   display: inline-block;
-  margin: 10px 0 20px 11px;
+  margin: 10px 0 20px 0;
+  width: 25%;
+  text-align: center;
 }
 .imgsty {
   width: 80px;

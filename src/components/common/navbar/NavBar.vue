@@ -1,3 +1,4 @@
+<!-- 顶部插槽 -->
 <template>
   <div class="nav-bar">
     <!-- 由于slot会被具体的元素替换，在slot上的属性也会被替换，所以要在slot外面包一个div来设置属性 -->

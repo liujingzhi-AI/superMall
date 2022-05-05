@@ -1,3 +1,4 @@
+<!-- 底部插槽 -->
 <template>
   <div class="tab-bar-item" @click="btn">
     <!-- 点击前图标 -->
