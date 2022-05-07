@@ -117,5 +117,6 @@ export default {
   position: sticky;
   top: 43px;
   background-color: #fff;
+  z-index: 9px; 
 }
 </style>

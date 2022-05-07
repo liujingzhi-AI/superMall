@@ -6,7 +6,7 @@
           <div>
             <img :src="item.image" alt="" class="imgsty" /> 
           </div>
-          <div style="text-align:center">{{item.title}}</div>
+          <div style="text-align:center;font-size:15px">{{item.title}}</div>
         </a>
       </li>
     </ul>
@@ -34,7 +34,7 @@ export default {
 <style scoped>
 .rowCircle {
   display: inline-block;
-  margin: 10px 0 20px 0;
+  margin: 15px 0 15px 0;
   width: 25%;
   text-align: center;
 }
