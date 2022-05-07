@@ -64,10 +64,13 @@ export default {
 </script>
 
 <style scoped>
-  .Item {
-    width: 100px;
-  }
-  goods-list-item {
-    padding-bottom: 50px;
+  .goods {
+    display: flex;
+    /* 除了float的另外一个方法。nowrap不包裹，所有东西一行塞。wrap包裹根据宽度来决定一行显示多少个 */
+    flex-wrap: wrap;
+    align-items: center;
+		padding: 0 6px;
+    /* 均等分 */
+		justify-content: space-between;
   }
 </style>
