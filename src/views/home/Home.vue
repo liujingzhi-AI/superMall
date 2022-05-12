@@ -1,31 +1,43 @@
 <template>
-  <div>
+  <div id="home">
     <sticky-header ref="sticky_">
         <!-- contents -->
       <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
     </sticky-header>
-    <!-- 轮播图 -->
-    <home-swiper
-      :banner="banner"
-    ></home-swiper>
-    <!-- 推荐信息 -->
-    <recommend-view
-      :recommend="recommend"
-    ></recommend-view>
-    <!-- 本周流行 -->
-    <feature-view
-    ></feature-view>
-    <!-- 滑动页面过程中的导航栏 -->
-    <tab-control
-      class="sednav"
-      :titles="['流行','新款','精选']"
-      @indexChange="indexChange"
-    ></tab-control>
-    <!-- 商品的展示 -->
-    <goods-list
-      :goods="goods"
-      :currentIndex="currentIndex"
-    ></goods-list>
+    <scroll 
+      class="content" 
+      ref="scroll" 
+      :probeType="probeType"
+      :pullUpLoad="true"
+      @scroll="contentScroll"
+      @pullingUp="loadMore"
+    >
+      <!-- 轮播图 -->
+      <home-swiper
+        :banner="banner"
+      ></home-swiper>
+      <!-- 推荐信息 -->
+      <recommend-view
+        :recommend="recommend"
+      ></recommend-view>
+      <!-- 本周流行 -->
+      <feature-view
+      ></feature-view>
+      <!-- 滑动页面过程中的导航栏 -->
+      <tab-control
+        class="sednav"
+        :titles="['流行','新款','精选']"
+        @indexChange="indexChange"
+      ></tab-control>
+      <!-- 商品的展示 -->
+      <goods-list
+        :goods="goods[type].list"
+        ref="Goods"
+      ></goods-list>
+      <!-- <div style="height:52px"></div> -->
+    </scroll>
+    <!-- 如果想要监听组件的点击，那么一定要加native,否则监听不到 -->
+    <back-top @click.native="backClick" v-show="backtopShow"></back-top>
   </div>
 </template>
 
@@ -37,7 +49,9 @@ import FeatureView from './childComponts/FeatureView.vue';
 import NavBar from '@/components/common/navbar/NavBar';
 import stickyHeader from '@/components/common/stickyHeader';
 import TabControl from '@/components/content/tabcontrol/TabControl';
-import GoodsList from '@/components/content/goods/GoodsList'
+import GoodsList from '@/components/content/goods/GoodsList';
+import Scroll from '@/components/common/scroll/Scroll';
+import BackTop from '../../components/content/backTop/BackTop.vue';
 
 import {
   getHomeMultidata,
@@ -54,6 +68,8 @@ export default {
     stickyHeader,
     TabControl,
     GoodsList,
+    Scroll,
+    BackTop,
   },
   data() {
     return {
@@ -65,6 +81,10 @@ export default {
         'sell': {page:0, list:[]}, // 精选
       },
       currentIndex: 0,   // 商品详情目前选中的下标
+      type: 'pop',         // 当前分类标识
+      probeType: 3,     // 判断是否监听页面的滑动位置。0,1是不监听，2是监听惯性(不监听)，3是监听(惯性也监听)
+      backtopShow: false,   // 返回顶部图标显示
+      pullUpLoad: true,    // 是否监听上拉事件
     };
   },
   created() {
@@ -96,27 +116,79 @@ export default {
         // 由于this.goods[type].list是一个数据，接口返回的res.data.list也是一个数据，所以不能直接push,否则会造成数组的嵌套。
         this.goods[type].list.push(...res.data.list)
         this.goods[type].page += 1  // 第一次数据请求完成后，this.goods[type].page +1。这时this.goods[type].page的值就为1了。
+        this.$refs.scroll.scroll.finishPullUp()
       })
     },
-
     // 商品详情目前选中的tab下标
     indexChange(val) {
       this.currentIndex = val
+      switch(this.currentIndex) {
+        case 0:
+          this.type = 'pop'
+          break;
+        case 1:
+          this.type = 'new'
+          break;
+        case 2:
+          this.type = 'sell'
+          break;
+      }
+      console.log("当前选中类型",this.goods[this.type].list,this.type);
+    },
+    // 返回顶部
+    backClick() {
+      // console.log("拿到子组件的数据",this.$refs.scroll.message);
+      // scroll有一个数据scroll,数据scroll有一个属性scrollTo()
+      this.$refs.scroll.scrollTo(0, 0, 500)  // x和y都返回0,500毫秒。
+    },
+    // 获取滑动位置
+    contentScroll(position) {
+      // console.log("位置",position);
+      this.backtopShow = position.y < -1000 ? true : false
+    },
+    // 监听是否滑动到了底部
+    loadMore() {
+      this.getData2(this.type)
     }
   }
 };
 </script>
 
 <style scoped>
-.home-nav{
+/* scoped,作用域的意思。如果不加这个，那么如果其他页面中也有相同的class的话，在这里进行的样式修改也会在其他地方显现 */
+.home-nav {
   /* 这是base.css中定义的颜色 */
   background-color: var(--color-tint);
   color: white;
 }
-.sednav{
+.sednav {
   position: sticky;
   top: 43px;
   background-color: #fff;
   z-index: 9px; 
+}
+/* calc() 函数计算元素的宽度 */
+/* height: calc(100% - 92px); */
+/* vh单位(viewport heigh) 视口。比如100vh就是百分之一百的视口，50vh就是百分之50的视口*/
+/* 92的由来是因为上下tabbar相加 */
+/* height: 100vh - 92px;   用这种高度，scroll失效  */
+/* .content {
+  height: 300px;
+  height: calc(100% - 92px);
+} */
+
+/* 以下css设置能实现scroll滑动 */
+/* 但是使用该css后，分类处的tabbar置顶失败，因为已经没有用原生的滑动了。目前认为是因为sticky与home的高度有冲突 */
+#home {
+  position: relative;
+	height: 100vh;
+}
+.content {
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 43px;
+  bottom: 49px;
 }
 </style>
