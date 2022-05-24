@@ -1,9 +1,16 @@
 <template>
   <div id="home">
     <sticky-header ref="sticky_">
-        <!-- contents -->
       <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+      <tab-control
+        ref="tabControl1"
+        :titles="['流行','新款','精选']"
+        @indexChange="indexChange"
+        class="controlTab"
+        v-show="isShow"
+      ></tab-control>
     </sticky-header>
+    <!-- 滑动页面过程中的导航栏 -->
     <scroll 
       class="content" 
       ref="scroll" 
@@ -15,6 +22,7 @@
       <!-- 轮播图 -->
       <home-swiper
         :banner="banner"
+        @swiperImageLoad="swiperImageLoad"
       ></home-swiper>
       <!-- 推荐信息 -->
       <recommend-view
@@ -25,9 +33,10 @@
       ></feature-view>
       <!-- 滑动页面过程中的导航栏 -->
       <tab-control
-        class="sednav"
+        ref="tabControl2"
         :titles="['流行','新款','精选']"
         @indexChange="indexChange"
+        v-show="!isShow"
       ></tab-control>
       <!-- 商品的展示 -->
       <goods-list
@@ -52,6 +61,8 @@ import TabControl from '@/components/content/tabcontrol/TabControl';
 import GoodsList from '@/components/content/goods/GoodsList';
 import Scroll from '@/components/common/scroll/Scroll';
 import BackTop from '../../components/content/backTop/BackTop.vue';
+
+import {debounce} from '@/common/utils'
 
 import {
   getHomeMultidata,
@@ -85,6 +96,8 @@ export default {
       probeType: 3,     // 判断是否监听页面的滑动位置。0,1是不监听，2是监听惯性(不监听)，3是监听(惯性也监听)
       backtopShow: false,   // 返回顶部图标显示
       pullUpLoad: true,    // 是否监听上拉事件
+      tabOffsetTop: 0,    //tabcontrol距离顶部的距离
+      isShow: false,   //　默认不吸顶
     };
   },
   created() {
@@ -92,15 +105,38 @@ export default {
     this.getData2('pop')
     this.getData2('new')
     this.getData2('sell')
+
   },
   mounted() {
     //获取高度变化
     this.$refs.sticky_.sticky_()
     console.log("this.$el:" + this.$el)
+
+    // 这里将this.$refs.scroll.refresh函数作为参数给debounce不要加小括号，不然就是传递的函数返回值。
+    const refresh = debounce(this.$refs.scroll.refresh)   
+
+    // 事件总线，监听Item中图片加载完成。
+    this.$bus.$on('itemImageLoad', () => {
+      // 这样使用时，相当于有多少张图谱安，就refresh几次，频率相当高。
+      // 这里不适合写在created周期中：如果要在created阶段中进行dom操作，就要将操作都放在 Vue.nextTick() 的回调函数中，因为created() 钩子函数执行的时候 DOM 其实并未进行任何渲染，而此时进行 DOM 操作无异于徒劳，所以此处一定要将 DOM 操作的 js 代码放进 Vue.nextTick() 的回调函数中。
+      // this.$refs.scroll.refresh()
+      // 对于频繁地调用refresh需要进行防抖操作
+      refresh()
+      // 下面将会打印30次,因为图片30张
+      // console.log('----------------');
+    })
   },
-  watch: {},
+  watch: {
+  },
   methods: {
-     // 1.请求多个数据
+    // 轮播图加载监听
+    swiperImageLoad() {
+      // 获取tabControl的offsetTop
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
+      console.log("tab切换",this.tabOffsetTop);
+    },
+
+    // 1.请求多个数据
     getData1() {
       getHomeMultidata().then(res => {
         this.banner = res.data.banner.list
@@ -116,7 +152,7 @@ export default {
         // 由于this.goods[type].list是一个数据，接口返回的res.data.list也是一个数据，所以不能直接push,否则会造成数组的嵌套。
         this.goods[type].list.push(...res.data.list)
         this.goods[type].page += 1  // 第一次数据请求完成后，this.goods[type].page +1。这时this.goods[type].page的值就为1了。
-        this.$refs.scroll.scroll.finishPullUp()
+        this.$refs.scroll.finishPullUp()
       })
     },
     // 商品详情目前选中的tab下标
@@ -134,6 +170,8 @@ export default {
           break;
       }
       console.log("当前选中类型",this.goods[this.type].list,this.type);
+      this.$refs.tabControl1.currentIndex = val
+      this.$refs.tabControl2.currentIndex = val
     },
     // 返回顶部
     backClick() {
@@ -144,12 +182,19 @@ export default {
     // 获取滑动位置
     contentScroll(position) {
       // console.log("位置",position);
+      // 1.判断BackTop是否显示
       this.backtopShow = position.y < -1000 ? true : false
+
+      // 2.决定tabControl是否吸顶（position: fixed）
+      this.isShow = (-position.y) > this.tabOffsetTop ? true : false
     },
     // 监听是否滑动到了底部
     loadMore() {
       this.getData2(this.type)
-    }
+      // 由于加载更多数据时图片还未撑开，scroll计算的高度与实际需要滚动的高度有差别。（还有一种办法就是设置每个li的高度，固定死了，就不会有这个问题。）
+      // 所以在监听下拉动作时调用refresh()，作用：重新计算 better-scroll，当 DOM 结构发生变化的时候务必要调用确保滚动的效果正常。
+      this.$refs.scroll.scroll.refresh()
+    },
   }
 };
 </script>
@@ -160,13 +205,15 @@ export default {
   /* 这是base.css中定义的颜色 */
   background-color: var(--color-tint);
   color: white;
+  z-index: 9px;
 }
-.sednav {
+
+/* .sednav {
   position: sticky;
   top: 43px;
   background-color: #fff;
   z-index: 9px; 
-}
+} */
 /* calc() 函数计算元素的宽度 */
 /* height: calc(100% - 92px); */
 /* vh单位(viewport heigh) 视口。比如100vh就是百分之一百的视口，50vh就是百分之50的视口*/
@@ -180,8 +227,9 @@ export default {
 /* 以下css设置能实现scroll滑动 */
 /* 但是使用该css后，分类处的tabbar置顶失败，因为已经没有用原生的滑动了。目前认为是因为sticky与home的高度有冲突 */
 #home {
-  position: relative;
+  position: absolute;
 	height: 100vh;
+  width: 100%;
 }
 .content {
   overflow: hidden;
@@ -190,5 +238,9 @@ export default {
   right: 0;
   top: 43px;
   bottom: 49px;
+  z-index: -10px;
+}
+.controlTab {
+  background-color: #fff;
 }
 </style>

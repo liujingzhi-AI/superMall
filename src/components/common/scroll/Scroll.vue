@@ -40,22 +40,39 @@ export default {
       // probeType为3的时候，只要页面滑动就能监听到
       // 但是如果不管用户是否需要实时监听，都进行监听的话，那么下面的this.scroll.on在滑动的时候就会一直监听到，这样非常影响性能。
       probeType: this.probeType,
-      pullUpLoad: this.pullUpLoad
+      pullUpLoad: this.pullUpLoad,
+      observeDOM: true,
     })
 
     // 监听滚动的位置
-    this.scroll.on('scroll', (position) => {
-      this.$emit('scroll',position)
-    })
+    if(this.probeType == '2' || this.probeType == '3') {
+      this.scroll.on('scroll', (position) => {
+        this.$emit('scroll',position)
+      })
+    }
+    
+    console.log(this.scroll);
+    this.scroll.refresh()     // 图片加载完后刷新一次
 
     // 监听上拉事件
-    this.scroll.on('pullingUp', () => {
-       this.$emit('pullingUp')
-    })
+    if(this.pullUpLoad) {
+      this.scroll.on('pullingUp', () => {
+         this.$emit('pullingUp')
+      })
+    }
   },
   methods: {
+    // 返回顶部
     scrollTo(x, y, time = 300) {
-      this.scroll.scrollTo(x, y, time)
+      // scroll的加载前，最好判断一下对象本身是否存在
+      this.scroll && this.scroll.scrollTo && this.scroll.scrollTo(x, y, time)
+    },
+    // 底部下拉
+    finishPullUp() {
+      this.scroll && this.scroll.finishPullUp && this.scroll.finishPullUp()
+    },
+    refresh() {
+      this.scroll && this.scroll.refresh && this.scroll.refresh()
     }
   },
 };
