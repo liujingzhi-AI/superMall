@@ -4,7 +4,7 @@
       <!-- slides -->
       <swiper-slide v-for="(item, index) in banner" :key="index">
         <a :href="item.link">
-          <img :src="item.image" alt="" />
+          <img :src="item.image" alt="" @load="imageLoad"/>
         </a>
       </swiper-slide>
 
@@ -50,12 +50,22 @@ export default {
         },
         paginationClickable: true,
       },
+      isLoad: false
     };
   },
 
   mounted() {},
 
-  methods: {},
+  methods: {
+    imageLoad() {
+      // 这里相当于swiperImageLoad就加载了一次，因为在第二次时isLoad是true，无法继续进行。
+      // 如果不这么做那么swiperImageLoad将会发射四次，性能不好。
+      if (!this.isLoad) {
+        this.$emit("swiperImageLoad")
+        this.isLoad = true
+      }
+    }
+  },
 };
 </script>
 
