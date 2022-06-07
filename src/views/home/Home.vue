@@ -98,6 +98,7 @@ export default {
       pullUpLoad: true,    // 是否监听上拉事件
       tabOffsetTop: 0,    //tabcontrol距离顶部的距离
       isShow: false,   //　默认不吸顶
+      saveY: 0,   // 保存首页离开时的Y
     };
   },
   created() {
@@ -106,6 +107,25 @@ export default {
     this.getData2('new')
     this.getData2('sell')
 
+  },
+  // 注意当离开首页的时候，调用destroyed钩子。
+  // 所以在切换页面再回到首页时，首页不会保持离开以前的状态。所以需要在app.vue的<router-view>外面包裹一层<keep-alive>
+  destroyed() {
+    console.log('home destroyed');
+  },
+  // 这里就两个钩子函数做一下解释：当第一次进入页面的时候，created和activated同时被调用，离开时destroyed被调用。
+  // 在app.vue加上keep-alive后，首页进行了缓存。所以再次进入该页面时不会再次调用created了。此时进入首页和离开首页只会调用下面的两个钩子函数
+  // 活跃
+  activated() {
+    // this.$refs.scroll.refresh()
+    console.log("活跃",this.saveY);
+    // this.$refs.scroll.scrollTo(0, this.saveY)
+    // this.$refs.scroll.scrollTo(0,this.saveY)
+  },
+  // 离开
+  deactivated() {
+    // this.saveY = this.$refs.scroll.getScrollY()
+    console.log("不活跃",this.saveY); 
   },
   mounted() {
     //获取高度变化
@@ -172,6 +192,7 @@ export default {
       console.log("当前选中类型",this.goods[this.type].list,this.type);
       this.$refs.tabControl1.currentIndex = val
       this.$refs.tabControl2.currentIndex = val
+      this.getData2(this.type)
     },
     // 返回顶部
     backClick() {

@@ -73,6 +73,10 @@ export default {
     },
     refresh() {
       this.scroll && this.scroll.refresh && this.scroll.refresh()
+    },
+    // 获取离开时的滑动高度
+    getScrollY() {
+      return this.scroll ? this.scroll.y : 0
     }
   },
 };
