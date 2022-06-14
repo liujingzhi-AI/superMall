@@ -1,5 +1,5 @@
 <template>
-  <div class="Item">
+  <div class="Item" @click="itemClick">
     <img :src="goodsItem.show.img" alt="" class="imgItem" @load="imageLoad">  
     <p class="pItem" :title="goodsItem.title">{{goodsItem.title}}</p>
     <div class="thrid">
@@ -49,6 +49,11 @@ export default {
       // 在Vue3.0中，this.$bus事件总线已经被mitt插件替代了。
       // 使用事件总线监听
       this.$bus.$emit('itemImageLoad')
+    },
+    // 商品点击
+    itemClick() {
+      console.log("跳转到详情页");
+      this.$router.push('/Detail/' + this.goodsItem.iid)
     }
   },
 };
