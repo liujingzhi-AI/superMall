@@ -6,27 +6,44 @@
     <detail-swiper
       :topImages="topImages"
     ></detail-swiper>
+    <!-- 商品基本信息 -->
+    <detail-base-info
+      v-if="flag"
+      :goods="goods"
+    ></detail-base-info>
+    <!-- 店家基本信息 -->
+    <detail-shop-info 
+    :shop="shop"
+    ></detail-shop-info>
   </div>
 </template>
 
 <script>
 import detailNavbar from '@/views/detail/childComps/detailNavbar'
 import DetailSwiper from './childComps/detailSwiper';
-
+import DetailBaseInfo from '@/views/detail/childComps/DetailBaseInfo'
+import detailShopInfo from '@/views/detail/childComps/detailShopInfo'
 import {
-  getDetail
+  getDetail,
+  Goods,
+  Shop,
 } from "../../network/detail"
 export default {
   name: "Detail",
   components: {
     detailNavbar,
     DetailSwiper,
+    DetailBaseInfo,
+    detailShopInfo
   },
   data() {
     return {
       iid: null,    // 当前点击商品的id
       res: null,    // 接口拿到的全部数据
       topImages: [],  // 顶部轮播图片
+      goods: {},  // 轮播图下面的商品基本信息
+      shop: {},   // 店铺信息
+      flag: false,  // 在goods没有传递过去之前，组件不显示
     };
   },
   created() {
@@ -37,7 +54,7 @@ export default {
 
     // 根据iid拿到详情页信息
     // getDetail(this.iid).then(res => {
-      //   console.log(res);
+    //     console.log(res);
     //   // 顶部轮播数据
     //   this.topImages = res.result.itemInfo.topImages
     //   console.log("轮播图数据",this.topImages);
@@ -48,9 +65,15 @@ export default {
       iid: this.iid
     }).then(res => {
       console.log(res);
-      // 顶部轮播数据
+      // 1.顶部轮播数据
       this.topImages = res.result.itemInfo.topImages
-      console.log("轮播图数据",this.topImages);
+      let data = res.result
+      // 2.商品基本信息
+      this.goods = new Goods(data.itemInfo, data.columns, data.shopInfo)
+      // 3.创建店铺信息的对象
+      this.shop = new Shop(data.shopInfo)
+      this.flag = true
+      console.log("数据",this.shop);
     })
   },
   mounted() {},
@@ -59,5 +82,9 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-
+#detail {
+  position: relative;
+  z-index: 9;
+  background-color: #fff;
+}
 </style>
