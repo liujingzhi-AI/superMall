@@ -1,5 +1,5 @@
 <template>
-  <div id="detail">
+  <div>
     <nav-bar>
       <div slot="left" @click="returnBack">
         <img src="@/assets/img/Left.png" alt="" style="width:44px;height:35px;padding-top:6px">
