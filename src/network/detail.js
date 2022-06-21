@@ -49,3 +49,21 @@ export class Shop {
 		this.cGoods = shopInfo.cGoods;
 	}
 }
+
+// 商品详情页参数
+export class GoodsParam {
+	constructor(info, rule) {
+		// 注： images可能没有值（某些商品有值，某些没有值）
+		this.image = info.images ? info.images[0] : '';
+		this.infos = info.set;
+		this.sizes = rule.tables;
+	}
+}
+
+//请求推荐recommend
+export function getRecommend(){
+	return request({
+		url:'/recommend',
+		method: 'get'
+	})
+}

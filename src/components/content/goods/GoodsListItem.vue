@@ -52,7 +52,7 @@ export default {
     },
     // 商品点击
     itemClick() {
-      console.log("跳转到详情页");
+      console.log("跳转到详情页",this.goodsItem.iid);
       this.$router.push('/Detail/' + this.goodsItem.iid)
     }
   },
