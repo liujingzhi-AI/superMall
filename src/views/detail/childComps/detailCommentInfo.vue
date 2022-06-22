@@ -18,6 +18,8 @@
         <span class="content">{{comment.list[0].content}}</span>
       </div>
       <div class="inform">
+        <span>{{time}}</span>
+        <span>{{ comment.list[0].created | showDate}}</span>
         <span>{{comment.list[0].style}}</span>
       </div>
     </div>
@@ -31,7 +33,7 @@
 
 <script>
 import GoodsList from '@/components/content/goods/GoodsList.vue';
-
+import {formatDate} from 'common/utils.js'
 export default {
   name: "SupermallDetailcommentinfo",
   components: { 
@@ -51,19 +53,32 @@ export default {
       }
     }
   },
+  // 时间戳过滤器
+  // Vue3移除了过滤器
+  filters: {
+    showDate(value) {
+      // 1.将时间戳转为Date对象
+      const date = new Date(value * 1000)
+      // 2.讲date进行格式化
+      return formatDate(date,'yyyy-MM-dd')
+    }
+  },
   data() {
     return {
       image: '',
       comment: {},  // 评论数据
-      recommend: []  // 推荐数据
+      recommend: [],  // 推荐数据
+      time: ''
     };
   },
 
   mounted() {
+    // this.time = this.getLocalTime(this.commentInfo.list[0].created)
   },
   watch: {
     commentInfo(newvalue) {
       this.comment = newvalue
+      this.time = this.getLocalTime(this.comment.list[0].created)
     },
     recommendInfo(val) {
       let arr = []
@@ -83,7 +98,11 @@ export default {
       this.recommend = arr
     },
   },
-  methods: {},
+  methods: {
+    getLocalTime(nS) {  
+      return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');  
+    }
+  },
 };
 </script>
 

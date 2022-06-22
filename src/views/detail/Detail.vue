@@ -45,6 +45,8 @@ import detailCommentInfo from './childComps/detailCommentInfo.vue';
 
 import Scroll from '@/components/common/scroll/Scroll'
 
+import {itemListenerMixin} from "@/common/mixin"
+
 import {
   getDetail,
   Goods,
@@ -54,6 +56,7 @@ import {
 } from "../../network/detail"
 export default {
   name: "Detail",
+  mixins: [itemListenerMixin],
   components: {
     detailNavbar,
     detailSwiper,
@@ -119,7 +122,13 @@ export default {
       this.recommendInfo = res.data.list
     })
   },
-  mounted() {},
+  destroyed() {
+    // 取消全局事件的监听
+    console.log("deactivated");
+    this.$bus.$off('detailItemImageLoad',this.itemImageListener)
+  },
+  mounted() {
+  },
   methods: {
     goodsImgLoad() {
       this.$refs.scroll.refresh()

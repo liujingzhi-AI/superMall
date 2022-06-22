@@ -48,7 +48,11 @@ export default {
       // 说明为何使用事件总线，由于在这里想用scroll的refresh，但是该组件与Scroll组件之间的距离相隔太远了。事件总线可以在任何组件中使用。
       // 在Vue3.0中，this.$bus事件总线已经被mitt插件替代了。
       // 使用事件总线监听
-      this.$bus.$emit('itemImageLoad')
+      if (this.$route.path.indexOf('/home') != -1) {
+        this.$bus.$emit('itemImageLoad')
+      } else if(this.$route.path.indexOf('/detail') != -1) {
+        this.$bus.$emit('itemImageLoad')
+      }
     },
     // 商品点击
     itemClick() {

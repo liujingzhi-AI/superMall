@@ -62,7 +62,7 @@ import GoodsList from '@/components/content/goods/GoodsList';
 import Scroll from '@/components/common/scroll/Scroll';
 import BackTop from '../../components/content/backTop/BackTop.vue';
 
-import {debounce} from '@/common/utils'
+import {itemListenerMixin} from "@/common/mixin"
 
 import {
   getHomeMultidata,
@@ -71,6 +71,7 @@ import {
 // 该部分的修改由Home分支执行
 export default {
   name: 'Home',
+  mixins: [itemListenerMixin],
   components:{
     HomeSwiper,
     RecommendView,
@@ -117,34 +118,23 @@ export default {
   // 在app.vue加上keep-alive后，首页进行了缓存。所以再次进入该页面时不会再次调用created了。此时进入首页和离开首页只会调用下面的两个钩子函数
   // 活跃
   activated() {
-    // this.$refs.scroll.refresh()
     console.log("活跃",this.saveY);
-    // this.$refs.scroll.scrollTo(0, this.saveY)
+    this.$refs.scroll.refresh()
+    this.$refs.scroll.scrollTo(0, this.saveY)
     // this.$refs.scroll.scrollTo(0,this.saveY)
   },
   // 离开
   deactivated() {
-    // this.saveY = this.$refs.scroll.getScrollY()
+    // 保存Y值
+    this.saveY = this.$refs.scroll.getScrollY()
     console.log("不活跃",this.saveY); 
+    // 取消全局事件的监听
+    this.$bus.$off('homeItemImageLoad',this.itemImageListener)
   },
   mounted() {
     //获取高度变化
     this.$refs.sticky_.sticky_()
     console.log("this.$el:" + this.$el)
-
-    // 这里将this.$refs.scroll.refresh函数作为参数给debounce不要加小括号，不然就是传递的函数返回值。
-    const refresh = debounce(this.$refs.scroll.refresh)   
-
-    // 事件总线，监听Item中图片加载完成。
-    this.$bus.$on('itemImageLoad', () => {
-      // 这样使用时，相当于有多少张图谱安，就refresh几次，频率相当高。
-      // 这里不适合写在created周期中：如果要在created阶段中进行dom操作，就要将操作都放在 Vue.nextTick() 的回调函数中，因为created() 钩子函数执行的时候 DOM 其实并未进行任何渲染，而此时进行 DOM 操作无异于徒劳，所以此处一定要将 DOM 操作的 js 代码放进 Vue.nextTick() 的回调函数中。
-      // this.$refs.scroll.refresh()
-      // 对于频繁地调用refresh需要进行防抖操作
-      refresh()
-      // 下面将会打印30次,因为图片30张
-      // console.log('----------------');
-    })
   },
   watch: {
   },
