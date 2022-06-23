@@ -60,7 +60,7 @@ import stickyHeader from '@/components/common/stickyHeader';
 import TabControl from '@/components/content/tabcontrol/TabControl';
 import GoodsList from '@/components/content/goods/GoodsList';
 import Scroll from '@/components/common/scroll/Scroll';
-import BackTop from '../../components/content/backTop/BackTop.vue';
+import BackTop from '@/components/content/backTop/BackTop.vue';
 
 import {itemListenerMixin} from "@/common/mixin"
 
@@ -134,7 +134,7 @@ export default {
   mounted() {
     //获取高度变化
     this.$refs.sticky_.sticky_()
-    console.log("this.$el:" + this.$el)
+    // console.log("this.$el:" + this.$el)
   },
   watch: {
   },
@@ -143,7 +143,7 @@ export default {
     swiperImageLoad() {
       // 获取tabControl的offsetTop
       this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
-      console.log("tab切换",this.tabOffsetTop);
+      // console.log("tab切换",this.tabOffsetTop);
     },
 
     // 1.请求多个数据

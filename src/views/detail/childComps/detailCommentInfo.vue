@@ -23,22 +23,13 @@
         <span>{{comment.list[0].style}}</span>
       </div>
     </div>
-    <!-- 推荐商品 -->
-    <goods-list 
-      v-if="recommendInfo.length !== '0'"
-      :goods="recommend"
-    ></goods-list>
   </div>
 </template>
 
 <script>
-import GoodsList from '@/components/content/goods/GoodsList.vue';
 import {formatDate} from 'common/utils.js'
 export default {
   name: "SupermallDetailcommentinfo",
-  components: { 
-    GoodsList, 
-  },
   props: {
     commentInfo: {
       type: Object,
@@ -67,7 +58,7 @@ export default {
     return {
       image: '',
       comment: {},  // 评论数据
-      recommend: [],  // 推荐数据
+      // recommend: [],  // 推荐数据
       time: ''
     };
   },
@@ -79,23 +70,6 @@ export default {
     commentInfo(newvalue) {
       this.comment = newvalue
       this.time = this.getLocalTime(this.comment.list[0].created)
-    },
-    recommendInfo(val) {
-      let arr = []
-      val.forEach(item => {
-        let show = {}
-        let obj = {
-          show
-        }
-        obj.show.img = item.image
-        obj.title = item.title
-        obj.orgPrice = item.price
-        obj.cfav = item.cfav
-        obj.iid = item.item_id
-        arr.push(obj)
-      })
-      console.log(arr);
-      this.recommend = arr
     },
   },
   methods: {

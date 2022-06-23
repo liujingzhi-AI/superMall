@@ -148,7 +148,7 @@ export default {
   },
   methods: {
     btnClick() {
-      console.log('btnClick');
+      // console.log('btnClick');
     }
   }
 };

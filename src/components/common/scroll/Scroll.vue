@@ -51,7 +51,7 @@ export default {
       })
     }
     
-    console.log(this.scroll);
+    // console.log(this.scroll);
     this.scroll.refresh()     // 图片加载完后刷新一次
 
     // 监听上拉事件

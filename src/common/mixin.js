@@ -29,6 +29,6 @@ export const itemListenerMixin = {
 
     // 事件总线，监听Item中图片加载完成。
     this.$bus.$on('itemImageLoad', this.itemImageListener)
-    console.log("我是混入中的内容");
+    // console.log("我是混入中的内容");
   }
 }
