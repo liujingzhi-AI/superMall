@@ -1,8 +1,17 @@
 <template>
   <div id="detail">
     <!-- 顶部tabbar -->
-    <detail-navbar></detail-navbar>
-    <scroll class="content" ref="scroll">
+    <detail-navbar
+      ref="detailNavbar"
+      @titleClick="titleClick"
+      :Index="Index"
+    ></detail-navbar>
+    <scroll 
+      class="content" 
+      ref="scroll"
+      :probeType="probeType"
+      @scroll="contentScroll"
+    >
       <!-- 轮播图 -->
       <detail-swiper
         :topImages="topImages"
@@ -23,13 +32,24 @@
       ></detail-goods-info>
       <!-- 详情页商品参数 -->
       <detail-param-info
+        ref="param"
+        class="param"
         :paramInfo="paramInfo"
       ></detail-param-info>
       <!-- 用户评价信息 -->
       <detail-comment-info
+        ref="comment"
+        class="comment"
         :commentInfo="commentInfo"
         :recommendInfo="recommendInfo"
       ></detail-comment-info>
+      <!-- 推荐商品 -->
+      <goods-list 
+        ref="goodList"
+        class="goodList"
+        v-if="recommendInfo.length !== '0'"
+        :goods="recommend"
+      ></goods-list>
     </scroll>
   </div>
 </template>
@@ -42,6 +62,7 @@ import detailShopInfo from '@/views/detail/childComps/detailShopInfo'
 import detailGoodsInfo from '@/views/detail/childComps/detailGoodsInfo.vue';
 import detailParamInfo from '@/views/detail/childComps/detailParamInfo.vue';
 import detailCommentInfo from './childComps/detailCommentInfo.vue';
+import GoodsList from '@/components/content/goods/GoodsList.vue';
 
 import Scroll from '@/components/common/scroll/Scroll'
 
@@ -66,6 +87,7 @@ export default {
     detailGoodsInfo,
     detailParamInfo,
     detailCommentInfo,
+    GoodsList,
   },
   data() {
     return {
@@ -79,6 +101,11 @@ export default {
       paramInfo: {},   // 参数数据
       commentInfo: {},   // 用户评价数据
       recommendInfo: [],  // 推荐数据
+      recommend: [],  // 简化推荐数据
+      themeTopY: [],  // 每个模块距离顶部的距离数组
+      distanceTop: 0,  // 滚动距离顶部的位置
+      Index: 0,    // 当前选中Tab下标
+      probeType: 3,     // 判断是否监听页面的滑动位置。0,1是不监听，2是监听惯性(不监听)，3是监听(惯性也监听)
     };
   },
   created() {
@@ -99,7 +126,7 @@ export default {
     getDetail({
       iid: this.iid
     }).then(res => {
-      console.log(res);
+      // console.log(res);
       // 1.顶部轮播数据
       this.topImages = res.result.itemInfo.topImages
       let data = res.result
@@ -129,16 +156,66 @@ export default {
   },
   mounted() {
   },
+  watch: {
+    // 推荐商品数据结构处理
+    recommendInfo(val) {
+      let arr = []
+      val.forEach(item => {
+        let show = {}
+        let obj = {
+          show
+        }
+        obj.show.img = item.image
+        obj.title = item.title
+        obj.orgPrice = item.price
+        obj.cfav = item.cfav
+        obj.iid = item.item_id
+        arr.push(obj)
+      })
+      // console.log(arr);
+      this.recommend = arr
+    },
+    // 监听当前滑动位置
+    // distanceTop(val) {
+    //   this.$refs.scroll.refresh()
+    //   if(val > this.themeTopY[3]){
+    //     this.Index = 3
+    //   } else if (val > this.themeTopY[2]) {
+    //     this.Index = 2
+    //   } else if (val > this.themeTopY[1]) {
+    //     this.Index = 1
+    //   } else if (val > this.themeTopY[0]) {
+    //     this.Index = 0
+    //   }
+    // }
+  },
   methods: {
     goodsImgLoad() {
       this.$refs.scroll.refresh()
-      // this.$refs.scroll.refresh();
-      // this.themeTopY = [];
-      // this.themeTopY.push(0);
-      // this.themeTopY.push(this.$refs.param.$el.offsetTop);
-      // this.themeTopY.push(this.$refs.comment.$el.offsetTop);
-      // this.themeTopY.push(this.$refs.recommend.$el.offsetTop);
-      // this.themeTopY.push(Number.MAX_VALUE);
+      // 当图片全部获取完了以后再去获取每个部分距离顶部的高度
+      this.themeTopY = [];
+      this.themeTopY.push(0);
+      this.themeTopY.push(this.$refs.param.$el.offsetTop);
+      this.themeTopY.push(this.$refs.comment.$el.offsetTop);
+      this.themeTopY.push(this.$refs.goodList.$el.offsetTop);
+      this.themeTopY.push(Number.MAX_VALUE);
+      console.log(this.themeTopY);
+    },
+    titleClick(val){
+      // console.log("点击事件",val)
+      this.$refs.scroll.scrollTo(0, -this.themeTopY[val], 200)
+    },
+    // 获取滚动位置
+    contentScroll(position) {
+      this.distanceTop = -position.y
+      const positionY = -(position.y);
+      let length = this.themeTopY.length
+      for(let i = 0; i < length-1; i++) {
+        if(this.Index !== i && (positionY >= this.themeTopY[i] && positionY < this.themeTopY[i+1])) {
+          this.Index = i;
+          // this.$refs.detailNavbar.currentIndex = this.Index
+        }
+      }
     },
   },
 };

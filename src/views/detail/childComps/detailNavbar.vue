@@ -24,6 +24,14 @@ export default {
   components: {
     NavBar 
   },
+  props: {
+    Index: {
+      type: Number,
+      default() {
+        return 0
+      }
+    }
+  },
   data() {
     return {
       titles: ['商品','参数','评论','推荐'],
@@ -31,9 +39,16 @@ export default {
     };
   },
   mounted() {},
+  watch: {
+    Index(val) {
+      this.currentIndex = val
+    }
+  },
   methods: {
+    // tab点击改变
     itemClick(val) {
       this.currentIndex = val
+      this.$emit('titleClick', val)
     },
     // 返回首页
     returnBack() {
