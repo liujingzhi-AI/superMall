@@ -6,6 +6,7 @@ import "swiper/css/swiper.css";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'lib-flexible/flexible';
+import store from './store'
 
 Vue.config.productionTip = false
 // swiper插件使用
@@ -17,6 +18,7 @@ Vue.prototype.$bus = new Vue()
 
 new Vue({
   render: h => h(App),
-  router
+  router,
+  store
 }).$mount('#app')
 

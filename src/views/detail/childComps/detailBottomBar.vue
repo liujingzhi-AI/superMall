@@ -31,7 +31,7 @@ export default {
   methods: {
     // 加入购物车
     addToCart() {
-
+      this.$emit("addCart")
     }
   },
 };

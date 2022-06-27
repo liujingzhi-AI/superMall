@@ -53,6 +53,7 @@
     </scroll>
     <!-- 底部工具栏 -->
     <detail-bottom-bar
+      @addCart="addCart"
     ></detail-bottom-bar>
     <!-- 回到顶部 -->
     <!-- 如果想要监听组件的点击，那么一定要加native,否则监听不到 -->
@@ -159,7 +160,7 @@ export default {
   },
   destroyed() {
     // 取消全局事件的监听
-    console.log("deactivated");
+    // console.log("deactivated");
     this.$bus.$off('detailItemImageLoad',this.itemImageListener)
   },
   mounted() {
@@ -207,7 +208,7 @@ export default {
       this.themeTopY.push(this.$refs.comment.$el.offsetTop);
       this.themeTopY.push(this.$refs.goodList.$el.offsetTop);
       this.themeTopY.push(Number.MAX_VALUE);
-      console.log(this.themeTopY);
+      // console.log(this.themeTopY);
     },
     titleClick(val){
       // console.log("点击事件",val)
@@ -227,6 +228,24 @@ export default {
       // 1.判断BackTop是否显示
       this.listenShowBackTop(position)
     },
+    // 添加购物车
+    addCart() {
+      // 1.获取购物车需要展示的信息
+      const product = {}
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.lowNowPrice;
+      product.iid = this.iid;
+
+      // 2.将商品添加到购物车
+      // 虽然这样可以添加但是不要这样做
+      // this.$store.cartList.push(product)
+      // store的mutations调用写法
+      // this.$store.commit('addCart',product)
+      // store中actions调用写法
+      this.$store.dispatch('addCart',product)
+    }
   },
 };
 </script>
