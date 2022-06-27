@@ -1,4 +1,5 @@
-import {debounce} from '@/common/utils'
+import {debounce} from '@/common/utils';
+import BackTop from '@/components/content/backTop/BackTop.vue';
 
 export const itemListenerMixin = {
   components: {
@@ -30,5 +31,28 @@ export const itemListenerMixin = {
     // 事件总线，监听Item中图片加载完成。
     this.$bus.$on('itemImageLoad', this.itemImageListener)
     // console.log("我是混入中的内容");
+  }
+}
+
+export const backTopMixin = {
+  components: {
+    BackTop
+  },
+  data() {
+    return {
+      backtopShow: false,   // 返回顶部图标显示
+    }
+  },
+  methods: {
+    // 返回顶部
+    backClick() {
+      // console.log("拿到子组件的数据",this.$refs.scroll.message);
+      // scroll有一个数据scroll,数据scroll有一个属性scrollTo()
+      this.$refs.scroll.scrollTo(0, 0, 500)  // x和y都返回0,500毫秒。
+    },
+    listenShowBackTop(position) {
+      // 1.判断BackTop是否显示
+      this.backtopShow = position.y < -1000 ? true : false
+    }
   }
 }

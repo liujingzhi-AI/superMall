@@ -51,6 +51,12 @@
         :goods="recommend"
       ></goods-list>
     </scroll>
+    <!-- 底部工具栏 -->
+    <detail-bottom-bar
+    ></detail-bottom-bar>
+    <!-- 回到顶部 -->
+    <!-- 如果想要监听组件的点击，那么一定要加native,否则监听不到 -->
+    <back-top @click.native="backClick" v-show="backtopShow"></back-top>
   </div>
 </template>
 
@@ -59,14 +65,15 @@ import detailNavbar from '@/views/detail/childComps/detailNavbar'
 import detailSwiper from './childComps/detailSwiper';
 import detailBaseInfo from '@/views/detail/childComps/DetailBaseInfo'
 import detailShopInfo from '@/views/detail/childComps/detailShopInfo'
-import detailGoodsInfo from '@/views/detail/childComps/detailGoodsInfo.vue';
-import detailParamInfo from '@/views/detail/childComps/detailParamInfo.vue';
-import detailCommentInfo from './childComps/detailCommentInfo.vue';
-import GoodsList from '@/components/content/goods/GoodsList.vue';
+import detailGoodsInfo from '@/views/detail/childComps/detailGoodsInfo';
+import detailParamInfo from '@/views/detail/childComps/detailParamInfo';
+import detailCommentInfo from '@/views/detail/childComps/detailCommentInfo';
+import detailBottomBar from '@/views/detail/childComps/detailBottomBar';
 
 import Scroll from '@/components/common/scroll/Scroll'
+import GoodsList from '@/components/content/goods/GoodsList.vue';
 
-import {itemListenerMixin} from "@/common/mixin"
+import {itemListenerMixin, backTopMixin} from "@/common/mixin"
 
 import {
   getDetail,
@@ -77,7 +84,7 @@ import {
 } from "../../network/detail"
 export default {
   name: "Detail",
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   components: {
     detailNavbar,
     detailSwiper,
@@ -87,6 +94,7 @@ export default {
     detailGoodsInfo,
     detailParamInfo,
     detailCommentInfo,
+    detailBottomBar,
     GoodsList,
   },
   data() {
@@ -216,6 +224,8 @@ export default {
           // this.$refs.detailNavbar.currentIndex = this.Index
         }
       }
+      // 1.判断BackTop是否显示
+      this.listenShowBackTop(position)
     },
   },
 };
