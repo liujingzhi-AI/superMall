@@ -60,9 +60,8 @@ import stickyHeader from '@/components/common/stickyHeader';
 import TabControl from '@/components/content/tabcontrol/TabControl';
 import GoodsList from '@/components/content/goods/GoodsList';
 import Scroll from '@/components/common/scroll/Scroll';
-import BackTop from '@/components/content/backTop/BackTop.vue';
 
-import {itemListenerMixin} from "@/common/mixin"
+import {itemListenerMixin, backTopMixin} from "@/common/mixin"
 
 import {
   getHomeMultidata,
@@ -71,7 +70,7 @@ import {
 // 该部分的修改由Home分支执行
 export default {
   name: 'Home',
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   components:{
     HomeSwiper,
     RecommendView,
@@ -81,7 +80,6 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop,
   },
   data() {
     return {
@@ -95,7 +93,6 @@ export default {
       currentIndex: 0,   // 商品详情目前选中的下标
       type: 'pop',         // 当前分类标识
       probeType: 3,     // 判断是否监听页面的滑动位置。0,1是不监听，2是监听惯性(不监听)，3是监听(惯性也监听)
-      backtopShow: false,   // 返回顶部图标显示
       pullUpLoad: true,    // 是否监听上拉事件
       tabOffsetTop: 0,    //tabcontrol距离顶部的距离
       isShow: false,   //　默认不吸顶
@@ -184,17 +181,11 @@ export default {
       this.$refs.tabControl2.currentIndex = val
       this.getData2(this.type)
     },
-    // 返回顶部
-    backClick() {
-      // console.log("拿到子组件的数据",this.$refs.scroll.message);
-      // scroll有一个数据scroll,数据scroll有一个属性scrollTo()
-      this.$refs.scroll.scrollTo(0, 0, 500)  // x和y都返回0,500毫秒。
-    },
     // 获取滑动位置
     contentScroll(position) {
       // console.log("位置",position);
       // 1.判断BackTop是否显示
-      this.backtopShow = position.y < -1000 ? true : false
+      this.listenShowBackTop(position)
 
       // 2.决定tabControl是否吸顶（position: fixed）
       this.isShow = (-position.y) > this.tabOffsetTop ? true : false
