@@ -67,18 +67,18 @@ export function request(config) {
 
     // 2.2 请求拦截
     instance.interceptors.request.use(aaa => {   // 返回的参数（各种配置），名字可以自己命名，这个并不是数据信息，数据信息在main.js中打印
-      console.log("返回配置信息",aaa);
+      // console.log("返回配置信息",aaa);
       return aaa    // 这里的aaa一定要返回出去
     },err => {   // 错误信息，如果请求都没有发送出去，就会来到这里
-      console.log("错误信息",err);
+      // console.log("错误信息",err);
     })     // 拦截instance这个实例的请求,use是使用的意思,有两个参数，两个参数都是函数
 
     // 2.3 响应拦截 
     instance.interceptors.response.use(res => {  // 由于服务器已经响应过了，所以这里拿到的是结果，而不是配置信息
-      console.log("返回的数据",res);
+      // console.log("返回的数据",res);
       return res.data   // 将想要的结果返回
     },err => {    // 获取失败
-      console.log("错误信息",err);
+      // console.log("错误信息",err);
     })     // 拦截instance这个实例的响应,use是使用的意思
 
     // 3.发送真正的网络请求
