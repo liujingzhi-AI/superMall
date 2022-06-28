@@ -245,6 +245,7 @@ export default {
       // this.$store.commit('addCart',product)
       // store中actions调用写法
       this.$store.dispatch('addCart',product)
+      this.$message.success("加入购物车成功")
     }
   },
 };
