@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import mutations from '@/store/mutations'
 import actions from '@/store/actions'
+import getters from '@/store/getters'
 
 // 1.安装插件
 Vue.use(Vuex)
@@ -15,6 +16,7 @@ const store = new Vuex.Store({
   },
   mutations,  
   actions,
+  getters,
   // mutations唯一的一个目的就是修改state中的状态
   // mutations中每一个方法尽可能完成的事情比较单一一点
   // 但是下面的代码中，新添加商品和商品数量加一是放在一个函数里进行计算。无法区别每次到底是加一还是新增商品
