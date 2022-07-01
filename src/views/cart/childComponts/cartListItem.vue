@@ -1,7 +1,7 @@
 <template>
   <div class="Item">
-    <div class="left" @click="checkChange">
-      <check-button class="checkB" :isChecked="listItem.checked"></check-button>
+    <div class="left">
+      <check-button class="checkB" :isChecked="listItem.checked" @click.native="checkChange"></check-button>
     </div>
     <div class="middle">
       <img :src="listItem.image" alt="" class="imgItem">  
@@ -31,7 +31,9 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      product:{}
+    };
   },
 
   mounted() {},
@@ -39,7 +41,16 @@ export default {
   methods: {
     // 是否选中
     checkChange() {
-      this.listItem.checked = !this.listItem.checked
+      // 非常不推荐直接改变props的值，这样只是改变了表象，实际上Vuex内对应的checked值并未响应式改变
+      // this.listItem.checked = !this.listItem.checked
+
+      // 对象结构赋值给一个新的空对象
+      // Object.assign(
+      //   this.product,
+      //   this.listItem
+      // )
+
+      this.$store.dispatch('checkChan', this.listItem)
     }
   },
 };

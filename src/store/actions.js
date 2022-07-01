@@ -1,14 +1,14 @@
 // 作为参数的时候没有加中括号
 import {
   ADD_COUNTER,
-  ADD_TO_CART
+  ADD_TO_CART,
+  CHECK_CHAN
 } from '@/store/mutation-type'
 
 export default {
   addCart (context, payload) {
     // 1.查找之前数组中是否有该商品
     let oldProduct = context.state.cartList.find(item => item.iid === payload.iid)
-
     // 2.
     if (oldProduct) {
       // oldProduct.count += 1
@@ -18,6 +18,10 @@ export default {
       // context.state.cartList.push(payload)
       context.commit(ADD_TO_CART, payload)
     }
-    console.log(this.state.cartList);
   },
+  // 改变选中商品的checked状态
+  checkChan(context, payload){
+    payload.checked = !payload.checked
+    context.commit(CHECK_CHAN, payload)
+  }
 }
