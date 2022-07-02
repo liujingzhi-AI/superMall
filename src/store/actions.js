@@ -8,17 +8,23 @@ import {
 
 export default {
   addCart (context, payload) {
-    // 1.查找之前数组中是否有该商品
-    let oldProduct = context.state.cartList.find(item => item.iid === payload.iid)
-    // 2.
-    if (oldProduct) {
-      // oldProduct.count += 1
-      context.commit(ADD_COUNTER, oldProduct)
-    } else {
-      // payload.count = 1
-      // context.state.cartList.push(payload)
-      context.commit(ADD_TO_CART, payload)
-    }
+    // return new Promise((resolve,reject) => {
+      // 1.查找之前数组中是否有该商品
+      let oldProduct = context.state.cartList.find(item => item.iid === payload.iid)
+      // 2.
+      if (oldProduct) {
+        // oldProduct.count += 1
+        context.commit(ADD_COUNTER, oldProduct)
+        // resolve('当前的商品数量加一')
+        return '当前的商品数量加一'
+      } else {
+        // payload.count = 1
+        // context.state.cartList.push(payload)
+        context.commit(ADD_TO_CART, payload)
+        // resolve('添加了新的商品')
+        return '添加了新的商品'
+      } 
+    // })
   },
   // 改变选中商品的checked状态
   checkChan(context, payload){

@@ -11,7 +11,7 @@
     </div>
     <div class="right">
       <br>
-      <span>去计算({{length}})</span>
+      <span @click="buyIt">去计算({{length}})</span>
     </div>
   </div>
 </template>
@@ -83,6 +83,12 @@ export default {
           item.checked = false
         })
         this.$store.dispatch('checkChanAll', this.list)
+      }
+    },
+    // 去结算
+    buyIt() {
+      if(this.list.length == 0) {
+        this.$toast.show("请选择需要购买的商品", 2000)
       }
     }
   },

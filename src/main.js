@@ -6,7 +6,8 @@ import "swiper/css/swiper.css";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'lib-flexible/flexible';
-import store from './store'
+import store from './store';
+import toast from 'components/common/toast'
 
 Vue.config.productionTip = false
 // swiper插件使用
@@ -15,6 +16,8 @@ Vue.use(Swiper)
 Vue.use(ElementUI);
 // vue实例可以作为事件总线
 Vue.prototype.$bus = new Vue()
+// 安装toast插件
+Vue.use(toast)
 
 new Vue({
   render: h => h(App),
