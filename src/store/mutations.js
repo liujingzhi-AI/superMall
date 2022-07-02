@@ -2,7 +2,8 @@
 import {
   ADD_COUNTER,
   ADD_TO_CART,
-  CHECK_CHAN
+  CHECK_CHAN,
+  CHECK_CHAN_ALL
 } from '@/store/mutation-type'
 
 export default {
@@ -18,6 +19,14 @@ export default {
   },
   // checked状态改变
   [CHECK_CHAN](state,payload) {
+    state.cartList.forEach(item => {
+      if(item.iid == payload.iid){
+        item.checked = payload.checked
+      }
+    });
+  },
+  // 是否全选
+  [CHECK_CHAN_ALL](state,payload) {
     state.cartList.forEach(item => {
       if(item.iid == payload.iid){
         item.checked = payload.checked

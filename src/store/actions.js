@@ -2,7 +2,8 @@
 import {
   ADD_COUNTER,
   ADD_TO_CART,
-  CHECK_CHAN
+  CHECK_CHAN,
+  CHECK_CHAN_ALL
 } from '@/store/mutation-type'
 
 export default {
@@ -23,5 +24,9 @@ export default {
   checkChan(context, payload){
     payload.checked = !payload.checked
     context.commit(CHECK_CHAN, payload)
+  },
+  // 通过全选改变所有商品的选中状态
+  checkChanAll(context, payload){
+    context.commit(CHECK_CHAN_ALL, payload)
   }
 }

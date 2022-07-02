@@ -41,19 +41,49 @@ export default {
       let price = 0
       this.goods.forEach(item => {
         // console.log(item);
-        price += Number(item.price * item.count) 
+        if(item.checked == true) {
+          price += Number(item.price * item.count) 
+        } 
       })
       return price.toFixed(2)
     },
     ...mapGetters({
       length: 'cartLength',
       list: 'cartList'
-    })
+    }),
+    lista() {
+      return JSON.parse(JSON.stringify(this.list))
+    }
+  },
+  watch: {
+    lista (newVal) {
+      let arr = []
+      newVal.forEach(item => {
+        arr.push(item.checked)
+      })
+      let flag = arr.includes(false) 
+      if(flag){
+        this.isChecked = false
+      } else {
+        this.isChecked = true
+      }
+    }
   },
   methods: {
     // 全选
     checkChange() {
       this.isChecked = !this.isChecked
+      if (this.isChecked == true) {
+        this.list.forEach (item => {
+          item.checked = true
+        })
+        this.$store.dispatch('checkChanAll', this.list)
+      } else {
+        this.list.forEach (item => {
+          item.checked = false
+        })
+        this.$store.dispatch('checkChanAll', this.list)
+      }
     }
   },
 };
