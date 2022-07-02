@@ -53,11 +53,15 @@
     </scroll>
     <!-- 底部工具栏 -->
     <detail-bottom-bar
-      @addCart="addCart"
+      @addCart="addCart1"
     ></detail-bottom-bar>
     <!-- 回到顶部 -->
     <!-- 如果想要监听组件的点击，那么一定要加native,否则监听不到 -->
     <back-top @click.native="backClick" v-show="backtopShow"></back-top>
+    <!-- <toast
+      :message="message"
+      :show="show"
+    ></toast> -->
   </div>
 </template>
 
@@ -70,12 +74,14 @@ import detailGoodsInfo from '@/views/detail/childComps/detailGoodsInfo';
 import detailParamInfo from '@/views/detail/childComps/detailParamInfo';
 import detailCommentInfo from '@/views/detail/childComps/detailCommentInfo';
 import detailBottomBar from '@/views/detail/childComps/detailBottomBar';
+// import Toast from '@/components/common/toast/Toast'
 
 import Scroll from '@/components/common/scroll/Scroll'
 import GoodsList from '@/components/content/goods/GoodsList.vue';
 
 import {itemListenerMixin, backTopMixin} from "@/common/mixin"
 
+import { mapActions } from "vuex"
 import {
   getDetail,
   Goods,
@@ -97,6 +103,7 @@ export default {
     detailCommentInfo,
     detailBottomBar,
     GoodsList,
+    // Toast
   },
   data() {
     return {
@@ -115,6 +122,8 @@ export default {
       distanceTop: 0,  // 滚动距离顶部的位置
       Index: 0,    // 当前选中Tab下标
       probeType: 3,     // 判断是否监听页面的滑动位置。0,1是不监听，2是监听惯性(不监听)，3是监听(惯性也监听)
+      message: '',    // 提示语
+      show: false,    // toast显隐
     };
   },
   created() {
@@ -199,6 +208,8 @@ export default {
     // }
   },
   methods: {
+    // Vuex  actions的映射
+    ...mapActions(['addCart']),
     goodsImgLoad() {
       this.$refs.scroll.refresh()
       // 当图片全部获取完了以后再去获取每个部分距离顶部的高度
@@ -229,7 +240,7 @@ export default {
       this.listenShowBackTop(position)
     },
     // 添加购物车
-    addCart() {
+    addCart1() {
       // 1.获取购物车需要展示的信息
       const product = {}
       product.image = this.topImages[0];
@@ -244,8 +255,25 @@ export default {
       // store的mutations调用写法
       // this.$store.commit('addCart',product)
       // store中actions调用写法
-      this.$store.dispatch('addCart',product)
-      this.$message.success("加入购物车成功")
+      // 如何在加入购物车以后弹出成功字样，封装toast
+      // 在调用dispatch => addCart时，使用promise，返回成功，失败
+      // 不过action本身就是promise,所以不用promise也可以，actions.js中包含了两种写法
+      // actions可以映射到该文件内，就可以直接用this.addCart()
+      this.addCart(product).then(res => {
+        // this.message = res
+        // this.show = true
+        // // 一会儿提示框还需要消失，所以加一个定时器
+        // setTimeout(() => {
+        //   this.show = false
+        // }, 2000);
+        this.$toast.show(res,2000)
+      })
+      // this.$store.dispatch('addCart',product).then(res => {
+      //   console.log(res);
+      //   this.$message.success(res)
+      // })
+
+
     }
   },
 };
