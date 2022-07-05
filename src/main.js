@@ -7,7 +7,8 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'lib-flexible/flexible';
 import store from './store';
-import toast from 'components/common/toast'
+import toast from 'components/common/toast';
+import VueLazyLoad from 'vue-lazyload'
 
 Vue.config.productionTip = false
 // swiper插件使用
@@ -18,6 +19,8 @@ Vue.use(ElementUI);
 Vue.prototype.$bus = new Vue()
 // 安装toast插件
 Vue.use(toast)
+// 图片懒加载，就是图片滑动到的时候再显示，节省性能
+Vue.use(VueLazyLoad)
 
 new Vue({
   render: h => h(App),
